@@ -32,4 +32,3 @@ def price_list(query, country):
 
 
 
-print(price_list("RX 6800 XT","AT"))
