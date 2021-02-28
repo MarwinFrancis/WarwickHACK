@@ -4,6 +4,7 @@ from shopping import price_list
 import requests
 from bs4 import BeautifulSoup as sorter
 import re
+import csv
 
 Bot = commands.Bot(command_prefix='.')
 
