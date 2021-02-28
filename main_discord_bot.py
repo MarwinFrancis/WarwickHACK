@@ -4,13 +4,15 @@ from shopping import price_list
 import requests
 from bs4 import BeautifulSoup as sorter
 import re
+import csv
+import os
 
 Bot = commands.Bot(command_prefix='.')
 
 
 @Bot.command(name='check')
 async def check(context, query, country):
-""" Lists the top 5 products of the given input"""
+    """ Lists the top 5 products of the given input"""
     general_channel = Bot.get_channel(815231056491839511)
 
     top_five = price_list(query, country)
@@ -26,25 +28,27 @@ async def check(context, query, country):
 @Bot.command(name = 'history', pass_context = True)                                    # Overriding the Bot command with history
 async def get_hist(context, limit):
 """ Takes an int as input, sends that amount of messages as a csv to the user who
-    wrote the command"""    
+    wrote the command """
     general = Bot.get_channel(815231056491839511)                                      # Getting the general channel with its ID
 
-    if not isinstance(limit, int):                                                     # Checking if the parameter is not a number
+    if not isinstance(int(limit), int):                                                # Checking if the parameter is not a number
         await context.send('limit not a number')
     else:
         with open('result.csv', mode='w', newline='') as file:                         # Create new csv file
-            writer = csv.writer(file)
+            writer = csv.writer(file)                                                 
             writer.writerow(['User', 'Message'])                                       # Write the first row
-            async for message in general.history(limit = int(limit)):                  # For every message up until the limit
+            async for message in general.history(limit=int(limit)):                    # For every message up until the limit
                 writer.writerow([message.author.name, message.content])                # Write the contents of the history
 
-        await message.author.send(file=discord.File(os.path.join('result.csv')))       # Send the csv file to the person who wrote the command
+        try:
+            await context.author.send(file=discord.File(os.path.join('result.csv')))   # Send the csv file to the person who wrote the command
+        except:
+            pass
         os.remove('result.csv')                                                        # Remove the csv file for others to use
-        
 
 @Bot.command(name = 'news')
 async def news(context):
-""" Get newest 5 articles from the website PCGamer, can only be used one ready is printed """
+    """ Get newest 5 articles from the website PCGamer, can only be used one ready is printed """
 
     url = 'https://www.pcgamer.com/'                                                    # Getting website 
     page = requests.get(url)
@@ -93,4 +97,4 @@ async def on_ready():
     await general_channel.send("Hello world")
 
 
-client.run('ODE1MjI2NzE2NTUyMjk4NTM2.YDpVCw.1F2Ipv-YAYBdnHvWA3dy17Jm1qg')
+Bot.run('ODE1MjI2NzE2NTUyMjk4NTM2.YDpVCw.1F2Ipv-YAYBdnHvWA3dy17Jm1qg')
