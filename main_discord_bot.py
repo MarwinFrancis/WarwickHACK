@@ -46,38 +46,28 @@ async def get_hist(context, limit):
 async def news(context):
 """ Get newest 5 articles from the website PCGamer, can only be used one ready is printed """
 
-    # -- Getting website -- #
-    url = 'https://www.pcgamer.com/'
+    url = 'https://www.pcgamer.com/'                                                    # Getting website 
     page = requests.get(url)
     sorted = sorter(page.content, 'html.parser')
+    articles_li = sorted.find_all('span', class_='article-name')                        # List of articles
+    images = sorted.find_all('img')                                                     # List of images
+    a_tags = sorted.find_all('a', class_='article-link')                                # List of a tags 
 
-    # -- Getting articles -- #
-    articles_li = sorted.find_all('span', class_='article-name')
-    # -- Getting images -- #
-    images = sorted.find_all('img')
-    # -- Getting a tags -- #
-    a_tags = sorted.find_all('a', class_='article-link')
+    links = []                                                                          # Links list for images 
+    links_sites = []                                                                    # Links list for links to the articles 
 
-    # -- links list for images -- #
-    links = []
-    # -- links list for links to the articles -- #
-    links_sites = []
-
-    # -- images -- #
     for img in images:
-        picture = re.findall(r'https://[a-z]+[:.].*?(?=\s)', str(img))[-1]
+        picture = re.findall(r'https://[a-z]+[:.].*?(?=\s)', str(img))[-1]              # Process images 
         links.append(picture)
 
     del links[2:23]
 
-    # -- links to articles -- #
     for link in a_tags:
-        links_sites.append(link.get('href'))
+        links_sites.append(link.get('href'))                                            # Links to articles
 
     del links_sites[1:22]
 
-    # -- getting text for description for embed -- #
-    description = []
+    description = []                                                                    # Getting text for description for embed 
     for i in range(0, 5):
         page = requests.get(links_sites[i])
         sorted = sorter(page.content, 'html.parser')
@@ -89,7 +79,7 @@ async def news(context):
     
     print('ready')
     
-    for i in range(1,6):
+    for i in range(1,6):                                                                 # Creating the embed to be sent to the user  
         embed = discord.Embed(title=str(articles_li[i].next))
         embed.add_field(name = 'Description', value=description[i], inline=False)
         embed.set_image(url = str(links[i]))
