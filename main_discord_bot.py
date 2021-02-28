@@ -89,7 +89,7 @@ async def news(context):
         
 @Bot.event
 async def on_ready():
-    general_channel = client.get_channel(815231056491839511)
+    general_channel = Bot.get_channel(815231056491839511)
     await general_channel.send("Hello world")
 
 
