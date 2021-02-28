@@ -25,23 +25,25 @@ async def check(context, query, country):
         await context.send(embed=myEmbed)
         
         
-@Bot.command(name = 'history', pass_context = True)                                    # Overriding the Bot command with history
+@Bot.command(name = 'history', pass_context = True)
 async def get_hist(context, limit):
-""" Takes an int as input, sends that amount of messages as a csv to the user who
-    wrote the command"""    
-    general = Bot.get_channel(815231056491839511)                                      # Getting the general channel with its ID
 
-    if not isinstance(limit, int):                                                     # Checking if the parameter is not a number
+    general = Bot.get_channel(810527278399488034)
+
+    if not isinstance(int(limit), int):
         await context.send('limit not a number')
     else:
-        with open('result.csv', mode='w', newline='') as file:                         # Create new csv file
+        with open('result.csv', mode='w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['User', 'Message'])                                       # Write the first row
-            async for message in general.history(limit = int(limit)):                  # For every message up until the limit
-                writer.writerow([message.author.name, message.content])                # Write the contents of the history
+            writer.writerow(['User', 'Message'])
+            async for message in general.history(limit = int(limit)):
+                writer.writerow([message.author.name, message.content])
 
-        await message.author.send(file=discord.File(os.path.join('result.csv')))       # Send the csv file to the person who wrote the command
-        os.remove('result.csv')                                                        # Remove the csv file for others to use
+        try:
+            await context.author.send(file=discord.File(os.path.join('result.csv')))
+        except:
+            pass
+        os.remove('result.csv')
         
 
 @Bot.command(name = 'news')
