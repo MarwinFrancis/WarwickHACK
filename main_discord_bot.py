@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup as sorter
 import re
 import csv
+import os
 
 Bot = commands.Bot(command_prefix='.')
 
