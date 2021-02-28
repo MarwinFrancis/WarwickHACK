@@ -1,13 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 27 15:32:55 2021
-
-@author: Vlad
-"""
-
 import discord
-from programme import price_list
 from discord.ext import commands
+from shopping import price_list
+
 client = commands.Bot(command_prefix='--')
 
 @client.command(name='check')
@@ -21,7 +15,6 @@ async def check(context, query, country):
         myEmbed.add_field(name=a['title'], value=a['source'])
         myEmbed.add_field(name="Price", value=a['price'])
         myEmbed.add_field(name="Reviews", value=a['reviews'])
-        #myEmbed.set_footer(text=a['source'])
         await context.send(embed=myEmbed)
 
 @client.event
