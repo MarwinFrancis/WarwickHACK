@@ -1,0 +1,3 @@
+# Exclude python virtual env
+.venv
+.idea
