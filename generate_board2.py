@@ -116,7 +116,7 @@ class Bishop:
             else:
                 return "Move is illegal - pieces have to move within the borders of the board."
         else:
-            return "Move is illegal - the bishop cannot only move diagonally."
+            return "Move is illegal - the bishop can only move diagonally."
 
 class Pawn:
     def __init__(self,colour,position):
@@ -415,118 +415,180 @@ for i in range(0,8):
 empty_board = copy.deepcopy(img)
 
 turn = 'white'
-
+game = 'over'
 @client.event
 async def on_message(message):
     general_channel = client.get_channel(815233775683502134)
-    move = message.content
-    #print("The message is",message.content,"and it was sent by",message.author)
-    # function1()
-    global turn
-    check = None
-    game = 'on'
-
-    if str(message.author)[0:12] != 'JP_Chess_Bot':
-
-        if convert(move) == None:
-            messageToSend = "Invalid command. Commands should be of the form '[a-h][1-8] to [a-h][1-8]'."
-            print(messageToSend)
-            await general_channel.send(messageToSend)
-        else:
-            y = convert(move)
-            print("y =",y)
-            if board[y[0]][y[1]] != None:
-                if board[y[0]][y[1]].colour == turn:
-                    if board[y[0]][y[1]].check_if_this_move_is_legal((y[2],y[3])) == 'Yes':
-                        if check == turn:
-
-                            piece = board[y[2]][y[3]]
-                            board[y[2]][y[3]] = board[y[0]][y[1]]
-                            board[y[2]][y[3]].position = (y[2],y[3])
-                            board[y[0]][y[1]] = None
-                            KingPosition = [0,0]
-                            for i in range(0,8):
-                                for j in range(0,8):
-                                    if str(type(board[i][j]))[17:21] == 'King' and board[i][j].colour == turn:
-                                        KingPosition[0] = board[i][j].position[0]
-                                        KingPosition[1] = board[i][j].position[1]
-                            if board[KingPosition[0]][KingPosition[1]].in_check() == 'Yes':
-                                board[y[0]][y[1]] = board[y[2]][y[3]]
-                                board[y[0]][y[1]].position = (y[0],y[1])
-                                board[y[2]][y[3]] = piece
-                            else:
-                                check = None
-
-
-                        else:
-                            board[y[2]][y[3]] = board[y[0]][y[1]]
-                            board[y[2]][y[3]].position = (y[2], y[3])
-                            board[y[0]][y[1]] = None
-
-                            if turn == 'white':
-                                turn = 'black'
-                            else:
-                                turn = 'white'
-
-                            KingPosition = [0, 0]
-                            for i in range(0,8):
-                                for j in range(0,8):
-                                    if str(type(board[i][j]))[17:21] == 'King' and board[i][j].colour == turn:
-                                        KingPosition[0] = board[i][j].position[0]
-                                        KingPosition[1] = board[i][j].position[1]
-                            if board[KingPosition[0]][KingPosition[1]].in_check() == 'Yes':
-                                check = turn
-
-                            img = copy.deepcopy(empty_board)
-                            for i in board:
-                                for j in i:
-                                    if str(type(j))[17:23] == 'Bishop':
-                                        if j.colour == 'black':
-                                            img.paste(black_Bishop,(100*(1+j.position[0]),100*(1+j.position[1])), black_Bishop)
-                                        else:
-                                            img.paste(white_Bishop, (100*(1+j.position[0]),100*(1+j.position[1])), white_Bishop)
-                                    elif str(type(j))[17:21] == 'Pawn':
-                                        if j.colour == 'black':
-                                            img.paste(black_Pawn, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])), black_Pawn)
-                                        else:
-                                            img.paste(white_Pawn, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])), white_Pawn)
-
-                                    elif str(type(j))[17:22] == 'Horse':
-                                        if j.colour == 'black':
-                                            img.paste(black_Horse,(100*(1+j.position[0]),100*(1+j.position[1])), black_Horse)
-                                        else:
-                                            img.paste(white_Horse, (100*(1+j.position[0]),100*(1+j.position[1])), white_Horse)
-                                    elif str(type(j))[17:21] == 'Rook':
-                                        if j.colour == 'black':
-                                            img.paste(black_Rook,(100*(1+j.position[0]),100*(1+j.position[1])), black_Rook)
-                                        else:
-                                            img.paste(white_Rook, (100*(1+j.position[0]),100*(1+j.position[1])), white_Rook)
-                                    elif str(type(j))[17:22] == 'Queen':
-                                        if j.colour == 'black':
-                                            img.paste(black_Queen,(100*(1+j.position[0]),100*(1+j.position[1])), black_Queen)
-                                        else:
-                                            img.paste(white_Queen, (100*(1+j.position[0]),100*(1+j.position[1])), white_Queen)
-                                    elif str(type(j))[17:21] == 'King':
-                                        if j.colour == 'black':
-                                            img.paste(black_King,(100*(1+j.position[0]),100*(1+j.position[1])), black_King)
-                                        else:
-                                            img.paste(white_King, (100*(1+j.position[0]),100*(1+j.position[1])), white_King)
-                            #img.show()
-                            img.save("image_to_show.jpg")
-                            await general_channel.send(file=discord.File('image_to_show.jpg'))
-                    else:
-                        messageToSend = board[y[0]][y[1]].check_if_this_move_is_legal((y[2], y[3]))
-                        print(messageToSend)
-                        await general_channel.send(messageToSend)
-                else:
-                    messageToSend = "It is " + str(turn) + "'s turn. Only " + turn + "pieces can be moved."
-                    print(messageToSend)
-                    await general_channel.send(messageToSend)
-            else:
-                messageToSend = "There is no piece at ("+str(y[0])+","+str(y[1])+")."
+    global game
+    stop = 0
+    if message.content[0:5] == 'chess':
+        if message.content[6:11] == 'start':
+            if game == 'on':
+                messageToSend = "There is another game going on right now. If you want to end it, please use 'chess end'."
                 print(messageToSend)
                 await general_channel.send(messageToSend)
-            #x = input()
+                stop = 1
+            else:
+                game = 'on'
+                messageToSend = "Game will now start. If you want to end it, please use 'chess end'."
+                print(messageToSend)
+                await general_channel.send(messageToSend)
+                img = copy.deepcopy(empty_board)
+                for i in board:
+                    for j in i:
+                        if str(type(j))[17:23] == 'Bishop':
+                            if j.colour == 'black':
+                                img.paste(black_Bishop, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          black_Bishop)
+                            else:
+                                img.paste(white_Bishop, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          white_Bishop)
+                        elif str(type(j))[17:21] == 'Pawn':
+                            if j.colour == 'black':
+                                img.paste(black_Pawn, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          black_Pawn)
+                            else:
+                                img.paste(white_Pawn, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          white_Pawn)
+
+                        elif str(type(j))[17:22] == 'Horse':
+                            if j.colour == 'black':
+                                img.paste(black_Horse, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          black_Horse)
+                            else:
+                                img.paste(white_Horse, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          white_Horse)
+                        elif str(type(j))[17:21] == 'Rook':
+                            if j.colour == 'black':
+                                img.paste(black_Rook, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          black_Rook)
+                            else:
+                                img.paste(white_Rook, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          white_Rook)
+                        elif str(type(j))[17:22] == 'Queen':
+                            if j.colour == 'black':
+                                img.paste(black_Queen, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          black_Queen)
+                            else:
+                                img.paste(white_Queen, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          white_Queen)
+                        elif str(type(j))[17:21] == 'King':
+                            if j.colour == 'black':
+                                img.paste(black_King, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          black_King)
+                            else:
+                                img.paste(white_King, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])),
+                                          white_King)
+                # img.show()
+                img.save("image_to_show.jpg")
+                await general_channel.send(file=discord.File('image_to_show.jpg'))
+
+
+        elif stop == 0 and len(message.content) == 14:
+            move = message.content[6:14]
+            global turn
+            check = None
+            if str(message.author)[0:12] != 'JP_Chess_Bot':
+
+                if convert(move) == None:
+                    messageToSend = "Invalid command. Commands should be of the form 'chess [a-h][1-8] to [a-h][1-8]'."
+                    print(messageToSend)
+                    await general_channel.send(messageToSend)
+                else:
+                    y = convert(move)
+                    print("y =",y)
+                    if board[y[0]][y[1]] != None:
+                        if board[y[0]][y[1]].colour == turn:
+                            if board[y[0]][y[1]].check_if_this_move_is_legal((y[2],y[3])) == 'Yes':
+                                if check == turn:
+
+                                    piece = board[y[2]][y[3]]
+                                    board[y[2]][y[3]] = board[y[0]][y[1]]
+                                    board[y[2]][y[3]].position = (y[2],y[3])
+                                    board[y[0]][y[1]] = None
+                                    KingPosition = [0,0]
+                                    for i in range(0,8):
+                                        for j in range(0,8):
+                                            if str(type(board[i][j]))[17:21] == 'King' and board[i][j].colour == turn:
+                                                KingPosition[0] = board[i][j].position[0]
+                                                KingPosition[1] = board[i][j].position[1]
+                                    if board[KingPosition[0]][KingPosition[1]].in_check() == 'Yes':
+                                        board[y[0]][y[1]] = board[y[2]][y[3]]
+                                        board[y[0]][y[1]].position = (y[0],y[1])
+                                        board[y[2]][y[3]] = piece
+                                    else:
+                                        check = None
+
+
+                                else:
+                                    board[y[2]][y[3]] = board[y[0]][y[1]]
+                                    board[y[2]][y[3]].position = (y[2], y[3])
+                                    board[y[0]][y[1]] = None
+
+                                    if turn == 'white':
+                                        turn = 'black'
+                                    else:
+                                        turn = 'white'
+
+                                    KingPosition = [0, 0]
+                                    for i in range(0,8):
+                                        for j in range(0,8):
+                                            if str(type(board[i][j]))[17:21] == 'King' and board[i][j].colour == turn:
+                                                KingPosition[0] = board[i][j].position[0]
+                                                KingPosition[1] = board[i][j].position[1]
+                                    if board[KingPosition[0]][KingPosition[1]].in_check() == 'Yes':
+                                        check = turn
+
+                                    img = copy.deepcopy(empty_board)
+                                    for i in board:
+                                        for j in i:
+                                            if str(type(j))[17:23] == 'Bishop':
+                                                if j.colour == 'black':
+                                                    img.paste(black_Bishop,(100*(1+j.position[0]),100*(1+j.position[1])), black_Bishop)
+                                                else:
+                                                    img.paste(white_Bishop, (100*(1+j.position[0]),100*(1+j.position[1])), white_Bishop)
+                                            elif str(type(j))[17:21] == 'Pawn':
+                                                if j.colour == 'black':
+                                                    img.paste(black_Pawn, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])), black_Pawn)
+                                                else:
+                                                    img.paste(white_Pawn, (100 * (1 + j.position[0]), 100 * (1 + j.position[1])), white_Pawn)
+
+                                            elif str(type(j))[17:22] == 'Horse':
+                                                if j.colour == 'black':
+                                                    img.paste(black_Horse,(100*(1+j.position[0]),100*(1+j.position[1])), black_Horse)
+                                                else:
+                                                    img.paste(white_Horse, (100*(1+j.position[0]),100*(1+j.position[1])), white_Horse)
+                                            elif str(type(j))[17:21] == 'Rook':
+                                                if j.colour == 'black':
+                                                    img.paste(black_Rook,(100*(1+j.position[0]),100*(1+j.position[1])), black_Rook)
+                                                else:
+                                                    img.paste(white_Rook, (100*(1+j.position[0]),100*(1+j.position[1])), white_Rook)
+                                            elif str(type(j))[17:22] == 'Queen':
+                                                if j.colour == 'black':
+                                                    img.paste(black_Queen,(100*(1+j.position[0]),100*(1+j.position[1])), black_Queen)
+                                                else:
+                                                    img.paste(white_Queen, (100*(1+j.position[0]),100*(1+j.position[1])), white_Queen)
+                                            elif str(type(j))[17:21] == 'King':
+                                                if j.colour == 'black':
+                                                    img.paste(black_King,(100*(1+j.position[0]),100*(1+j.position[1])), black_King)
+                                                else:
+                                                    img.paste(white_King, (100*(1+j.position[0]),100*(1+j.position[1])), white_King)
+                                    #img.show()
+                                    img.save("image_to_show.jpg")
+                                    await general_channel.send(file=discord.File('image_to_show.jpg'))
+                            else:
+                                messageToSend = board[y[0]][y[1]].check_if_this_move_is_legal((y[2], y[3]))
+                                print(messageToSend)
+                                await general_channel.send(messageToSend)
+                        else:
+                            messageToSend = "It is " + str(turn) + "'s turn. Only " + turn + "pieces can be moved."
+                            print(messageToSend)
+                            await general_channel.send(messageToSend)
+                    else:
+                        messageToSend = "There is no piece at ("+str(y[0])+","+str(y[1])+")."
+                        print(messageToSend)
+                        await general_channel.send(messageToSend)
+                    #x = input()
 
 
 client.run('ODE1MjI5NTUxNTMzNDkwMjI2.YDpXrw.bvORZjsUg76Q7LiNkecRvBCRL8o')
