@@ -19,3 +19,6 @@ A discord bot that can display the top 5 google shopping results. Using zenserp 
 - pip install requests
 - pip install discord 
 
+## Usage
+
+
