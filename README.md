@@ -24,22 +24,22 @@ Scans through the website PCGamer and lists the top 5 articles, their descriptio
 
 ## Usage
 ###To check price a product:
-'''
+```
 .check product GB
-'''
+```
 - Note: for products with more than one word, for example: iPhone 12, use quotation marks:
-'''
+```
 .check "iPhone 12" GB
-
+```
 ### To see news:
-'''
+```
 .news
-'''
+```
 
 ### To see history:
-'''
+```
 .history 10
-'''
+```
 where 10 is number of messages from before the command was issued. Other numbers can be used too.
 
 
