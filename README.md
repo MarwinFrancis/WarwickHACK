@@ -15,5 +15,5 @@ Using zenserp API and python to scrape the first 5 results of any product. After
 
 ## Setup
 - pip install requests
-- pip install discord
+- pip install discord as
 
